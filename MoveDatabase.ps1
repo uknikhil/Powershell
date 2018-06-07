@@ -1,9 +1,13 @@
 #Move All User Database From C: drive to other drive
-$ErrorActionPreference = "Stop" 
+$ErrorActionPreference = "Stop"
+#New location of data and log files
 $dataTo="F:\SQLDB\data\"
-$logTo="F:\SQLDB\log\"
-$instance="user"
+$logTo="E:\SQLDB\log\"
+#SQL Server instance name
+$instance="MyServer\SQL1"
+#If you want to move file not from C: drive,update where condition in below line
 $dblist=invoke-sqlcmd -server user -database master -query "select DB_NAME(database_id) as dbname,name,file_id,physical_name from sys.master_files where physical_name like 'E:%' and database_id>4"
+
 $dbs= $dblist.dbname | get-unique
 try{
 foreach($db in $dbs){
