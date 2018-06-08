@@ -6,7 +6,7 @@ $logTo="E:\SQLDB\log\"
 #SQL Server instance name
 $instance="MyServer\SQL1"
 #If you want to move file not from C: drive,update where condition in below line
-$dblist=invoke-sqlcmd -server user -database master -query "select DB_NAME(database_id) as dbname,name,file_id,physical_name from sys.master_files where physical_name like 'E:%' and database_id>4"
+$dblist=invoke-sqlcmd -server user -database master -query "select DB_NAME(database_id) as dbname,name,type,physical_name from sys.master_files where physical_name like 'E:%' and database_id>4"
 
 $dbs= $dblist.dbname | get-unique
 try{
@@ -18,10 +18,10 @@ foreach($filename in $filenames){
 $logicalname=$filename.name
 $physicalname=$filename.physical_name
 $physicalfile=Split-Path $physicalname -leaf
-if($filename.file_id -eq 1){
+if($filename.type -eq 1){
 $physicalnewname=$dataTo+$physicalfile
 }
-elseif($filename.file_id -eq 2){
+elseif($filename.type -eq 2){
 $physicalnewname=$logTo+$physicalfile
 }
 $alterquery="ALTER DATABASE $db MODIFY FILE (NAME =$logicalname, FILENAME ='$physicalnewname');" 
